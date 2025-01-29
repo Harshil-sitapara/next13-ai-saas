@@ -1,3 +1,4 @@
+import { appConfig } from "@/lib/appConfig";
 import Image from "next/image";
 
 export const Loader = () => {
@@ -7,7 +8,7 @@ export const Loader = () => {
         <Image alt="Logo" src="/logo.png" fill />
       </div>
       <p className="text-sm text-muted-foreground">
-        Charles AI Platform is thinking...
+        {appConfig.app_name} is thinking...
       </p>
     </div>
   );

@@ -5,10 +5,10 @@ import axios from "axios";
 import { Code } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { useRouter } from "next/navigation";
-import { ChatCompletionRequestMessage } from "openai";
+import { ChatCompletionRequestMessage } from "@/types";
 
 import { BotAvatar } from "@/components/bot-avatar";
 import { Heading } from "@/components/heading";
@@ -23,11 +23,12 @@ import { Empty } from "@/components/ui/empty";
 import { useProModal } from "@/hooks/use-pro-modal";
 
 import { formSchema } from "./constants";
+import { SYSTEM_PROMPT_CODE } from "@/constants";
 
 const CodePage = () => {
   const router = useRouter();
   const proModal = useProModal();
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([SYSTEM_PROMPT_CODE]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,15 +38,16 @@ const CodePage = () => {
   });
 
   const isLoading = form.formState.isSubmitting;
-  
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
       const newMessages = [...messages, userMessage];
-      
+
       const response = await axios.post('/api/code', { messages: newMessages });
       setMessages((current) => [...current, userMessage, response.data]);
-      
+      console.log("messages", messages)
+
       form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) {
@@ -58,7 +60,7 @@ const CodePage = () => {
     }
   }
 
-  return ( 
+  return (
     <div>
       <Heading
         title="Code Generation"
@@ -70,21 +72,9 @@ const CodePage = () => {
       <div className="px-4 lg:px-8">
         <div>
           <Form {...form}>
-            <form 
-              onSubmit={form.handleSubmit(onSubmit)} 
-              className="
-                rounded-lg 
-                border 
-                w-full 
-                p-4 
-                px-3 
-                md:px-6 
-                focus-within:shadow-sm
-                grid
-                grid-cols-12
-                gap-2
-              "
-            >
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className=" rounded-lg border w-full p-4 px-3 md:px-6 focus-within:shadow-sm grid grid-cols-12 gap-2">
               <FormField
                 name="prompt"
                 render={({ field }) => (
@@ -92,8 +82,8 @@ const CodePage = () => {
                     <FormControl className="m-0 p-0">
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                        disabled={isLoading} 
-                        placeholder="Simple toggle button using react hooks." 
+                        disabled={isLoading}
+                        placeholder="Simple toggle button using react hooks."
                         {...field}
                       />
                     </FormControl>
@@ -112,13 +102,13 @@ const CodePage = () => {
               <Loader />
             </div>
           )}
-          {messages.length === 0 && !isLoading && (
+          {messages.filter(message => message.role !== "system").length === 0 && !isLoading && (
             <Empty label="No conversation started." />
           )}
           <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div 
-                key={message.content} 
+            {messages.filter(message => message.role !== "system").map((message) => (
+              <div
+                key={message.content}
                 className={cn(
                   "p-8 w-full flex items-start gap-x-8 rounded-lg",
                   message.role === "user" ? "bg-white border border-black/10" : "bg-muted",
@@ -143,8 +133,8 @@ const CodePage = () => {
         </div>
       </div>
     </div>
-   );
+  );
 }
- 
+
 export default CodePage;
 

@@ -10,12 +10,13 @@ import {
   MessageSquare,
   Music,
   Settings,
-  VideoIcon,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { FreeCounter } from "@/components/free-counter";
+import { appConfig } from "@/lib/appConfig";
+import { VideoIcon } from "lucide-react";
 
 const poppins = Montserrat({ weight: "600", subsets: ["latin"] });
 
@@ -80,7 +81,7 @@ export const Sidebar = ({
             <Image fill alt="Logo" src="/logo.png" />
           </div>
           <h1 className={cn("text-2xl font-bold", poppins.className)}>
-            Charles AI Platform
+           {appConfig.app_name} 
           </h1>
         </Link>
         <div className="space-y-1">

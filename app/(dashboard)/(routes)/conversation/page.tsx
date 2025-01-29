@@ -5,9 +5,8 @@ import axios from "axios";
 import { MessageSquare } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { ChatCompletionRequestMessage } from "openai";
 
 import { BotAvatar } from "@/components/bot-avatar";
 import { Heading } from "@/components/heading";
@@ -20,13 +19,16 @@ import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
 import { Empty } from "@/components/ui/empty";
 import { useProModal } from "@/hooks/use-pro-modal";
+import DynamicContent from "@/components/dynamic-content"
+import { ChatCompletionRequestMessage } from "@/types"
 
 import { formSchema } from "./constants";
+import { SYSTEM_PROMPT_CONVERSATION } from "@/constants";
 
 const ConversationPage = () => {
   const router = useRouter();
   const proModal = useProModal();
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
+  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([SYSTEM_PROMPT_CONVERSATION]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,15 +38,15 @@ const ConversationPage = () => {
   });
 
   const isLoading = form.formState.isSubmitting;
-  
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       const userMessage: ChatCompletionRequestMessage = { role: "user", content: values.prompt };
       const newMessages = [...messages, userMessage];
-      
+
       const response = await axios.post('/api/conversation', { messages: newMessages });
       setMessages((current) => [...current, userMessage, response.data]);
-      
+
       form.reset();
     } catch (error: any) {
       if (error?.response?.status === 403) {
@@ -57,7 +59,7 @@ const ConversationPage = () => {
     }
   }
 
-  return ( 
+  return (
     <div>
       <Heading
         title="Conversation"
@@ -69,21 +71,9 @@ const ConversationPage = () => {
       <div className="px-4 lg:px-8">
         <div>
           <Form {...form}>
-            <form 
-              onSubmit={form.handleSubmit(onSubmit)} 
-              className="
-                rounded-lg 
-                border 
-                w-full 
-                p-4 
-                px-3 
-                md:px-6 
-                focus-within:shadow-sm
-                grid
-                grid-cols-12
-                gap-2
-              "
-            >
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="rounded-lg border w-full p-4 px-3 md:px-6 focus-within:shadow-sm grid grid-cols-12 gap-2">
               <FormField
                 name="prompt"
                 render={({ field }) => (
@@ -91,8 +81,8 @@ const ConversationPage = () => {
                     <FormControl className="m-0 p-0">
                       <Input
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                        disabled={isLoading} 
-                        placeholder="How do I calculate the radius of a circle?" 
+                        disabled={isLoading}
+                        placeholder="How do I calculate the radius of a circle?"
                         {...field}
                       />
                     </FormControl>
@@ -111,30 +101,30 @@ const ConversationPage = () => {
               <Loader />
             </div>
           )}
-          {messages.length === 0 && !isLoading && (
+          {messages.filter(message => message.role !== "system").length === 0 && !isLoading && (
             <Empty label="No conversation started." />
           )}
           <div className="flex flex-col-reverse gap-y-4">
-            {messages.map((message) => (
-              <div 
-                key={message.content} 
+            {messages.filter(message => message.role !== "system").map((message) => (
+              <div
+                key={message.content}
                 className={cn(
                   "p-8 w-full flex items-start gap-x-8 rounded-lg",
                   message.role === "user" ? "bg-white border border-black/10" : "bg-muted",
                 )}
               >
                 {message.role === "user" ? <UserAvatar /> : <BotAvatar />}
-                <p className="text-sm">
-                  {message.content}
-                </p>
+                <div className="text-sm">
+                  <DynamicContent content={message.content || ''} />
+                </div>
               </div>
             ))}
           </div>
         </div>
       </div>
     </div>
-   );
+  );
 }
- 
+
 export default ConversationPage;
 

@@ -5,3 +5,5 @@ export const formSchema = z.object({
     message: "Music prompt is required"
   }),
 });
+
+export const COMING_SOON = true;

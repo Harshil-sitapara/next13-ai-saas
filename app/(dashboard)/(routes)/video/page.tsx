@@ -5,7 +5,7 @@ import axios from "axios";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { FileAudio } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -17,7 +17,7 @@ import { Loader } from "@/components/loader";
 import { Empty } from "@/components/ui/empty";
 import { useProModal } from "@/hooks/use-pro-modal";
 
-import { formSchema } from "./constants";
+import { formSchema, COMING_SOON } from "./constants";
 
 const VideoPage = () => {
   const router = useRouter();
@@ -51,8 +51,35 @@ const VideoPage = () => {
       router.refresh();
     }
   }
+ 
+if (COMING_SOON) {
+  return (
+    <div>
+      <Heading
+        title="Video Generation"
+        description="Turn your prompt into video."
+        icon={FileAudio}
+        iconColor="text-orange-700"
+        bgColor="bg-orange-700/10"
+      />
+      <div className="px-4 lg:px-8">
+        <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
+          <div className="relative w-40 h-40">
+            <FileAudio className="w-40 h-40 text-orange-700" />
+          </div>
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-bold">Coming Soon</h2>
+            <p className="text-muted-foreground">
+              We&apos;re working hard to bring you video generation capabilities. Stay tuned!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-  return ( 
+  return (
     <div>
       <Heading
         title="Video Generation"
@@ -63,21 +90,9 @@ const VideoPage = () => {
       />
       <div className="px-4 lg:px-8">
         <Form {...form}>
-          <form 
-            onSubmit={form.handleSubmit(onSubmit)} 
-            className="
-              rounded-lg 
-              border 
-              w-full 
-              p-4 
-              px-3 
-              md:px-6 
-              focus-within:shadow-sm
-              grid
-              grid-cols-12
-              gap-2
-            "
-          >
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className=" rounded-lg  border  w-full  p-4  px-3  md:px-6  focus-within:shadow-sm grid grid-cols-12 gap-2">
             <FormField
               name="prompt"
               render={({ field }) => (
@@ -85,8 +100,8 @@ const VideoPage = () => {
                   <FormControl className="m-0 p-0">
                     <Input
                       className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                      disabled={isLoading} 
-                      placeholder="Clown fish swimming in a coral reef" 
+                      disabled={isLoading}
+                      placeholder="Clown fish swimming in a coral reef"
                       {...field}
                     />
                   </FormControl>
@@ -113,7 +128,7 @@ const VideoPage = () => {
         )}
       </div>
     </div>
-   );
+  );
 }
- 
+
 export default VideoPage;

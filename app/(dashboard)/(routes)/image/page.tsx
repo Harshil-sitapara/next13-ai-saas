@@ -7,7 +7,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Download, ImageIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
 import { Heading } from "@/components/heading";
@@ -21,10 +21,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useProModal } from "@/hooks/use-pro-modal";
 
 import { amountOptions, formSchema, resolutionOptions } from "./constants";
+import { ImageModal } from "@/components/image-modal";
 
 const PhotoPage = () => {
   const proModal = useProModal();
   const router = useRouter();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [photos, setPhotos] = useState<string[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,8 +43,10 @@ const PhotoPage = () => {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setPhotos([]);
+      const [height, width] = values.resolution.split('x').map(Number);
+      const resolution = { height, width };
 
-      const response = await axios.post('/api/image', values);
+      const response = await axios.post('/api/image', { ...values, resolution });
 
       const urls = response.data.map((image: { url: string }) => image.url);
 
@@ -58,7 +62,7 @@ const PhotoPage = () => {
     }
   }
 
-  return ( 
+  return (
     <div>
       <Heading
         title="Image Generation"
@@ -69,21 +73,9 @@ const PhotoPage = () => {
       />
       <div className="px-4 lg:px-8">
         <Form {...form}>
-          <form 
-            onSubmit={form.handleSubmit(onSubmit)} 
-            className="
-              rounded-lg 
-              border 
-              w-full 
-              p-4 
-              px-3 
-              md:px-6 
-              focus-within:shadow-sm
-              grid
-              grid-cols-12
-              gap-2
-            "
-          >
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className=" rounded-lg border w-full p-4 px-3 md:px-6 focus-within:shadow-sm grid grid-cols-12 gap-2">
             <FormField
               name="prompt"
               render={({ field }) => (
@@ -91,8 +83,8 @@ const PhotoPage = () => {
                   <FormControl className="m-0 p-0">
                     <Input
                       className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                      disabled={isLoading} 
-                      placeholder="A picture of a horse in Swiss alps" 
+                      disabled={isLoading}
+                      placeholder="A picture of a horse in Swiss alps"
                       {...field}
                     />
                   </FormControl>
@@ -104,10 +96,10 @@ const PhotoPage = () => {
               name="amount"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-2">
-                  <Select 
-                    disabled={isLoading} 
-                    onValueChange={field.onChange} 
-                    value={field.value} 
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -117,8 +109,8 @@ const PhotoPage = () => {
                     </FormControl>
                     <SelectContent>
                       {amountOptions.map((option) => (
-                        <SelectItem 
-                          key={option.value} 
+                        <SelectItem
+                          key={option.value}
                           value={option.value}
                         >
                           {option.label}
@@ -134,10 +126,10 @@ const PhotoPage = () => {
               name="resolution"
               render={({ field }) => (
                 <FormItem className="col-span-12 lg:col-span-2">
-                  <Select 
-                    disabled={isLoading} 
-                    onValueChange={field.onChange} 
-                    value={field.value} 
+                  <Select
+                    disabled={isLoading}
+                    onValueChange={field.onChange}
+                    value={field.value}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -147,8 +139,8 @@ const PhotoPage = () => {
                     </FormControl>
                     <SelectContent>
                       {resolutionOptions.map((option) => (
-                        <SelectItem 
-                          key={option.value} 
+                        <SelectItem
+                          key={option.value}
                           value={option.value}
                         >
                           {option.label}
@@ -175,7 +167,7 @@ const PhotoPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-8">
           {photos.map((src) => (
             <Card key={src} className="rounded-lg overflow-hidden">
-              <div className="relative aspect-square">
+              <div className="relative aspect-square cursor-pointer" onClick={() => setSelectedImage(src)}>
                 <Image
                   fill
                   alt="Generated"
@@ -192,8 +184,13 @@ const PhotoPage = () => {
           ))}
         </div>
       </div>
+      <ImageModal
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        src={selectedImage || ""}
+      />
     </div>
-   );
+  );
 }
- 
+
 export default PhotoPage;

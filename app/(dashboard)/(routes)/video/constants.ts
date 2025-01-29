@@ -5,3 +5,5 @@ export const formSchema = z.object({
     message: "Prompt is required."
   }),
 });
+
+export const COMING_SOON = true;

@@ -1,6 +1,8 @@
 import { Code, ImageIcon, MessageSquare, Music, VideoIcon } from "lucide-react";
+import { appConfig } from "@/lib/appConfig";
+import { ChatCompletionRequestMessage } from "./types";
 
-export const MAX_FREE_COUNTS = 5;
+export const MAX_FREE_COUNTS = 10;
 
 export const tools = [
   {
@@ -39,3 +41,13 @@ export const tools = [
     href: '/code',
   },
 ];
+
+export const SYSTEM_PROMPT_CONVERSATION: ChatCompletionRequestMessage = {
+  role: "system",
+  content: `You are an intelligent AI assistant powered by App name: ${appConfig.app_name}. You aim to be helpful, friendly, and knowledgeable while maintaining a professional tone.`
+}
+
+export const SYSTEM_PROMPT_CODE: ChatCompletionRequestMessage = {
+  role: "system",
+  content: `You are a code generator. You must answer only in markdown code snippets. Use code comments for explanations.`
+}

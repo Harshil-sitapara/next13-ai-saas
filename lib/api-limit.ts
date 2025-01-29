@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs";
 import prismadb from "@/lib/prismadb";
 import { MAX_FREE_COUNTS } from "@/constants";
 
-export const incrementApiLimit = async () => {
+export const incrementApiLimit = async (incrementBy: number = 1) => {
   const { userId } = auth();
 
   if (!userId) {
@@ -17,11 +17,11 @@ export const incrementApiLimit = async () => {
   if (userApiLimit) {
     await prismadb.userApiLimit.update({
       where: { userId: userId },
-      data: { count: userApiLimit.count + 1 },
+      data: { count: userApiLimit.count + incrementBy },
     });
   } else {
     await prismadb.userApiLimit.create({
-      data: { userId: userId, count: 1 },
+      data: { userId: userId, count: incrementBy },
     });
   }
 };
@@ -47,7 +47,7 @@ export const checkApiLimit = async () => {
 export const getApiLimitCount = async () => {
   const { userId } = auth();
 
-  if (!userId) {
+  if (!userId || typeof userId !== "string") {
     return 0;
   }
 

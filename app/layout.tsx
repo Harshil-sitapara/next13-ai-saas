@@ -7,12 +7,13 @@ import { ModalProvider } from "@/components/modal-provider";
 import { CrispProvider } from "@/components/crisp-provider";
 
 import "./globals.css";
+import { appConfig } from "@/lib/appConfig";
 
 const font = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Charles AI Platform",
-  description: "AI Platform",
+  title: appConfig.app_name,
+  description: appConfig.app_description,
 };
 
 export default async function RootLayout({

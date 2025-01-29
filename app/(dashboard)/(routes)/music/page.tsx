@@ -5,7 +5,7 @@ import axios from "axios";
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Music, Send } from "lucide-react";
 
@@ -17,7 +17,7 @@ import { Loader } from "@/components/loader";
 import { Empty } from "@/components/ui/empty";
 import { useProModal } from "@/hooks/use-pro-modal";
 
-import { formSchema } from "./constants";
+import { formSchema, COMING_SOON } from "./constants";
 
 const MusicPage = () => {
   const proModal = useProModal();
@@ -53,7 +53,34 @@ const MusicPage = () => {
     }
   }
 
-  return ( 
+  if (COMING_SOON) {
+    return (
+      <div>
+        <Heading
+          title="Music Generation"
+          description="Turn your prompt into music."
+          icon={Music}
+          iconColor="text-orange-700"
+          bgColor="bg-orange-700/10"
+        />
+        <div className="px-4 lg:px-8">
+          <div className="h-[60vh] flex flex-col items-center justify-center space-y-4">
+            <div className="relative w-40 h-40">
+              <Music className="w-40 h-40 text-orange-700" />
+            </div>
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-bold">Coming Soon</h2>
+              <p className="text-muted-foreground">
+                We&apos;re working hard to bring you music generation capabilities. Stay tuned!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div>
       <Heading
         title="Music Generation"
@@ -64,8 +91,8 @@ const MusicPage = () => {
       />
       <div className="px-4 lg:px-8">
         <Form {...form}>
-          <form 
-            onSubmit={form.handleSubmit(onSubmit)} 
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
             className="
               rounded-lg 
               border 
@@ -86,8 +113,8 @@ const MusicPage = () => {
                   <FormControl className="m-0 p-0">
                     <Input
                       className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
-                      disabled={isLoading} 
-                      placeholder="Piano solo" 
+                      disabled={isLoading}
+                      placeholder="Piano solo"
                       {...field}
                     />
                   </FormControl>
@@ -114,7 +141,7 @@ const MusicPage = () => {
         )}
       </div>
     </div>
-   );
+  );
 }
- 
+
 export default MusicPage;
