@@ -10,7 +10,7 @@ const testimonials = [
     description: "This is the best application I've ever used!",
   },
   {
-    name: "Antonio",
+    name: "David",
     avatar: "A",
     title: "Designer",
     description: "I use this daily for generating new photos!",
@@ -22,7 +22,7 @@ const testimonials = [
     description: "This app has changed my life, cannot imagine working without it!",
   },
   {
-    name: "Mary",
+    name: "Sophia",
     avatar: "M",
     title: "CFO",
     description: "The best in class, definitely worth the premium subscription!",

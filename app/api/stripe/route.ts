@@ -41,7 +41,7 @@ export async function GET() {
       line_items: [
         {
           price_data: {
-            currency: "MYR",
+            currency: "USD",
             product_data: {
               name: "Pro Version",
               description:
