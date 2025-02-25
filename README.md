@@ -1,13 +1,5 @@
 # Build a SaaS AI Platform with Next.js 13, React, Tailwind, Prisma, Stripe | Full Tutorial 2023
 
-![Copy of Copy of Copy of Fullstack Twitter Clone](https://github.com/AntonioErdeljac/next13-ai-saas/assets/23248726/42c12e22-c59a-448c-9c11-8757a2fff30c)
-
-
-
-This is a repository for Build a SaaS AI Platform with Next.js 13, React, Tailwind, Prisma, Stripe | Full Tutorial 2023.
-
-[VIDEO TUTORIAL](https://www.youtube.com/watch?v=ffJ38dBzrlY)
-
 Features:
 
 - Tailwind design
@@ -36,13 +28,13 @@ Features:
 ### Cloning the repository
 
 ```shell
-git clone https://github.com/AntonioErdeljac/next13-ai-saas.git
+git clone https://github.com/Harshil-sitapara/next13-ai-saas.git
 ```
 
 ### Install packages
 
 ```shell
-npm i
+npm install
 ```
 
 ### Setup .env file
@@ -63,13 +55,14 @@ DATABASE_URL=
 
 STRIPE_API_KEY=
 STRIPE_WEBHOOK_SECRET=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 ### Setup Prisma
 
-Add MySQL Database (I used PlanetScale)
+Add postgresql Database (I used Supabase)
 
 ```shell
 npx prisma db push
@@ -86,6 +79,10 @@ npm run dev
 
 Running commands with npm `npm run [command]`
 
-| command         | description                              |
-| :-------------- | :--------------------------------------- |
-| `dev`           | Starts a development instance of the app |
+| command         | description                                        |
+| :-------------- | :------------------------------------------------- |
+| `dev`           | Starts a development instance of the app           |
+| `lint`          | Runs ESLint to check for code issues               |
+| `postinstall`   | Generates Prisma client after dependencies install |
+| `studio`        | Opens Prisma Studio for database management        |
+| `stripe:listen` | Forwards Stripe events to local API webhook        |
